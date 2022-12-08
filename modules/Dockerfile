@@ -5,7 +5,7 @@ ARG MODULES_TAG
 
 RUN set -eux; \
   apt-get update; \
-  apt-get upgrade -y \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     cmake \
     git \
@@ -49,7 +49,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -eux; \
   apt-get update; \
-  apt-get upgrade -y \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libzbar0 \
