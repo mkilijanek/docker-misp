@@ -3,7 +3,7 @@ FROM debian:bullseye-slim as FilesSource
 
 ARG MISP_TAG
 
-RUN apt-get install git -y && mkdir -p /tmp/docker-misp \
+RUN apt-get update && apt-get install git -y && mkdir -p /tmp/docker-misp \
     && git clone https://github.com/mkilijanek/docker-misp.git /tmp/docker-misp/ \
     && cd /tmp/docker-misp && git checkout tags/${MISP_TAG} --depth 1
     
