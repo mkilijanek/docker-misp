@@ -3,7 +3,7 @@ FROM debian:bullseye-slim as FilesSource
 
 ARG MISP_TAG
 
-RUN mkdir -p /tmp/docker-misp && cd /tmp/ && wget https://github.com/mkilijanek/docker-misp/archive/refs/tags/${MISP_TAG}.zip && unzip ${MISP_TAG}.zip && cp -r /tmp/docker-misp-${MISP_TAG}/* /tmp/docker-misp/ 
+RUN apt update && apt install wget && mkdir -p /tmp/docker-misp && cd /tmp/ && wget https://github.com/mkilijanek/docker-misp/archive/refs/tags/${MISP_TAG}.zip && unzip ${MISP_TAG}.zip && cp -r /tmp/docker-misp-${MISP_TAG}/* /tmp/docker-misp/ 
     
 RUN apt-get remove --purge git wget -y && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
