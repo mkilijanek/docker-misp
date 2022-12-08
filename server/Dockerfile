@@ -1,3 +1,15 @@
+# na czas budowania obrazu - źródło plików:
+FROM debian:bullseye-slim as FilesSource
+
+ARG MISP_TAG
+
+RUN apt-get install git -y && mkdir -p /tmp/docker-misp \
+    && git clone https://github.com/mkilijanek/docker-misp.git /tmp/docker-misp/ \
+    && cd /tmp/docker-misp && git checkout tags\${MISP_TAG} --depth 1
+    
+RUN apt-get remove --purge git wget -y && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# budowanie obrazu:
 FROM composer:2.2 as composer-build
 
 ARG MISP_TAG
@@ -235,25 +247,25 @@ RUN set -eux; \
   rm /etc/nginx/sites-enabled/*; \
   mkdir /run/php /etc/nginx/certs
 
-COPY files/nginx/sites-available/ /etc/nginx/sites-available/
-COPY files/nginx/conf.d/ /nginx-config-templates
-COPY files/nginx/site-customization.conf /etc/nginx/site-customization.conf
+COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/sites-available/ /etc/nginx/sites-available/
+COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/conf.d/ /nginx-config-templates
+COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/site-customization.conf /etc/nginx/site-customization.conf
 
 # php configuration templates
-COPY files/fpm-config-template.conf /fpm-config-template.conf
-COPY files/php-config-templates /php-config-templates
+COPY --from=FilesSource /tmp/docker-misp/server/files/fpm-config-template.conf /fpm-config-template.conf
+COPY --from=FilesSource /tmp/docker-misp/server/files/php-config-templates /php-config-templates
 
 # supervisor
-COPY files/supervisor/supervisord.conf /etc/supervisord.conf
+COPY --from=FilesSource /tmp/docker-misp/server/files/supervisor/supervisord.conf /etc/supervisord.conf
 
 # entrypoints
-COPY files/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-COPY files/entrypoint-workers.sh /usr/local/bin/entrypoint-workers.sh
+COPY --from=FilesSource /tmp/docker-misp/server/files/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=FilesSource /tmp/docker-misp/server/files/entrypoint-workers.sh /usr/local/bin/entrypoint-workers.sh
 
 # probes
-COPY files/docker-readiness.sh /usr/local/bin/docker-readiness.sh
-COPY files/docker-liveness.sh /usr/local/bin/docker-liveness.sh
-COPY files/php-fpm-healthcheck /usr/local/bin/php-fpm-healthcheck
+COPY --from=FilesSource /tmp/docker-misp/server/files/docker-readiness.sh /usr/local/bin/docker-readiness.sh
+COPY --from=FilesSource /tmp/docker-misp/server/files/docker-liveness.sh /usr/local/bin/docker-liveness.sh
+COPY --from=FilesSource /tmp/docker-misp/server/files/php-fpm-healthcheck /usr/local/bin/php-fpm-healthcheck
 
 # change work directory
 WORKDIR /var/www/MISP
