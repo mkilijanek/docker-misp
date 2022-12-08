@@ -29,7 +29,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -eux; \
   apt-get update; \
-  apt-get upgrade -y \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     gcc \
     make \
@@ -62,7 +62,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -eux; \
   apt-get update; \
-  apt-get upgrade -y \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     gcc \
     git \
@@ -153,7 +153,7 @@ ARG PHP_VER
 # OS packages
 RUN set -eux; \
   apt-get update; \
-  apt-get upgrade -y \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     # requirements
     libfcgi-bin \
