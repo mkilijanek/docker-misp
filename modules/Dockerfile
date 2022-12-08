@@ -1,7 +1,9 @@
 # na czas budowania obrazu - źródło plików:
 FROM debian:bullseye-slim as FilesSource
 
-ARG MISP_TAG
+ARG MISP_TAG=v2.4.166
+ARG MODULES_TAG=v2.4.165
+ARG PHP_VER=20190902
 
 RUN apt update && apt install wget -y && mkdir -p /tmp/docker-misp && cd /tmp/ && wget https://github.com/mkilijanek/docker-misp/archive/refs/tags/${MISP_TAG}.zip && unzip ${MISP_TAG}.zip && cp -r /tmp/docker-misp-${MISP_TAG}/* /tmp/docker-misp/ 
     
@@ -11,7 +13,9 @@ RUN apt-get remove --purge git wget -y && apt-get autoremove -y && apt-get clean
 FROM python:3.9-slim-bullseye as builder
 
 ENV DEBIAN_FRONTEND noninteractive
-ARG MODULES_TAG
+ARG MISP_TAG=v2.4.166
+ARG MODULES_TAG=v2.4.165
+ARG PHP_VER=20190902
 
 RUN set -eux; \
   apt-get update; \
