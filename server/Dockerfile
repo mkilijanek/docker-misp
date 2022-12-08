@@ -5,7 +5,7 @@ ARG MISP_TAG
 
 RUN apt-get install git -y && mkdir -p /tmp/docker-misp \
     && git clone https://github.com/mkilijanek/docker-misp.git /tmp/docker-misp/ \
-    && cd /tmp/docker-misp && git checkout tags\${MISP_TAG} --depth 1
+    && cd /tmp/docker-misp && git checkout tags/${MISP_TAG} --depth 1
     
 RUN apt-get remove --purge git wget -y && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
