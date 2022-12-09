@@ -163,9 +163,12 @@ ARG PHP_VER=20190902
 
 # Use MariaDB mirror repository (more up to date than Debian repositories!):
 RUN set -eux; \
+    apt-get update; \
     apt-get install apt-transport-https curl -y; \
     curl -o /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc 'https://mariadb.org/mariadb_release_signing_key.asc'; \
-    echo 'deb https://ftp.icm.edu.pl/pub/unix/database/mariadb/repo/10.5/debian bullseye main' >>/etc/apt/sources.list
+    echo 'deb https://ftp.icm.edu.pl/pub/unix/database/mariadb/repo/10.5/debian bullseye main' >>/etc/apt/sources.list; \
+    apt-get update
+    
 # OS packages
 RUN set -eux; \
   apt-get update; \
