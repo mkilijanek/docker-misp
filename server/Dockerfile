@@ -3,7 +3,8 @@ FROM debian:bullseye-slim as FilesSource
 
 ARG MISP_TAG=v2.4.166
 
-RUN apt update && apt install wget -y && mkdir -p /tmp/docker-misp && cd /tmp/ && wget https://github.com/mkilijanek/docker-misp/archive/refs/tags/${MISP_TAG}.zip && unzip ${MISP_TAG}.zip && cp -r /tmp/docker-misp-${MISP_TAG}/* /tmp/docker-misp/ 
+RUN apt update && apt install wget -y && mkdir -p /opt/docker-misp && cd /opt/ && wget https://github.com/mkilijanek/docker-misp/archive/refs/tags/${MISP_TAG}.tar.gz && tar xvf ${MISP_TAG}.tar.gz -C /opt && cp -r /opt/docker-misp-${MISP_TAG}/* /opt/docker-misp/ 
+    
     
 RUN apt-get remove --purge git wget -y && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
@@ -244,25 +245,25 @@ RUN set -eux; \
   rm /etc/nginx/sites-enabled/*; \
   mkdir /run/php /etc/nginx/certs
 
-COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/sites-available/ /etc/nginx/sites-available/
-COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/conf.d/ /nginx-config-templates
-COPY --from=FilesSource /tmp/docker-misp/server/files/nginx/site-customization.conf /etc/nginx/site-customization.conf
+COPY --from=FilesSource /opt/docker-misp/server/files/nginx/sites-available/ /etc/nginx/sites-available/
+COPY --from=FilesSource /opt/docker-misp/server/files/nginx/conf.d/ /nginx-config-templates
+COPY --from=FilesSource /opt/docker-misp/server/files/nginx/site-customization.conf /etc/nginx/site-customization.conf
 
 # php configuration templates
-COPY --from=FilesSource /tmp/docker-misp/server/files/fpm-config-template.conf /fpm-config-template.conf
-COPY --from=FilesSource /tmp/docker-misp/server/files/php-config-templates /php-config-templates
+COPY --from=FilesSource /opt/docker-misp/server/files/fpm-config-template.conf /fpm-config-template.conf
+COPY --from=FilesSource /opt/docker-misp/server/files/php-config-templates /php-config-templates
 
 # supervisor
-COPY --from=FilesSource /tmp/docker-misp/server/files/supervisor/supervisord.conf /etc/supervisord.conf
+COPY --from=FilesSource /opt/docker-misp/server/files/supervisor/supervisord.conf /etc/supervisord.conf
 
 # entrypoints
-COPY --from=FilesSource /tmp/docker-misp/server/files/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-COPY --from=FilesSource /tmp/docker-misp/server/files/entrypoint-workers.sh /usr/local/bin/entrypoint-workers.sh
+COPY --from=FilesSource /opt/docker-misp/server/files/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=FilesSource /opt/docker-misp/server/files/entrypoint-workers.sh /usr/local/bin/entrypoint-workers.sh
 
 # probes
-COPY --from=FilesSource /tmp/docker-misp/server/files/docker-readiness.sh /usr/local/bin/docker-readiness.sh
-COPY --from=FilesSource /tmp/docker-misp/server/files/docker-liveness.sh /usr/local/bin/docker-liveness.sh
-COPY --from=FilesSource /tmp/docker-misp/server/files/php-fpm-healthcheck /usr/local/bin/php-fpm-healthcheck
+COPY --from=FilesSource /opt/docker-misp/server/files/docker-readiness.sh /usr/local/bin/docker-readiness.sh
+COPY --from=FilesSource /opt/docker-misp/server/files/docker-liveness.sh /usr/local/bin/docker-liveness.sh
+COPY --from=FilesSource /opt/docker-misp/server/files/php-fpm-healthcheck /usr/local/bin/php-fpm-healthcheck
 
 # change work directory
 WORKDIR /var/www/MISP
