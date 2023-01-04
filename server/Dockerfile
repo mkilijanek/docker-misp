@@ -277,4 +277,8 @@ COPY --from=FilesSource /opt/docker-misp/server/files/php-fpm-healthcheck /usr/l
 # change work directory
 WORKDIR /var/www/MISP
 
+RUN set -eux; \
+    apt-get update; \
+    apt-get install apt-transport-https curl -y;
+    
 ENTRYPOINT ["docker-entrypoint.sh"]
