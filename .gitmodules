@@ -1,0 +1,6 @@
+[submodule "server"]
+	path = server
+	url = https://github.com/mkilijanek/misp-server.git
+[submodule "modules"]
+	path = modules
+	url = https://github.com/mkilijanek/misp-modules.git
